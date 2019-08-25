@@ -4,6 +4,14 @@ from requestHandlers import RequestHandlers
 	
 routes = {
 	"GET": {
-		"/" : RequestHandlers.getHelloWorld
+		"/deviceStatus" : RequestHandlers.deviceStatusGetRequest
+	},
+	
+	"POST": {
+		"/deviceStatus" : RequestHandlers.deviceStatusPostRequest
+	},
+	
+	"PUT": {
+		"/deviceStatus" : RequestHandlers.deviceStatusPutRequest
 	}
 }
