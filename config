@@ -1,0 +1,5 @@
+{
+	"defaultHost": "localhost",
+	"defaultPort": 8000,
+	"database": "mongodb+srv://SmartHomeServer:pw@despaironcluster-lorle.mongodb.net/test?retryWrites=true&w=majority"
+}

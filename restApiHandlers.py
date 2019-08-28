@@ -14,7 +14,7 @@ class RestApiHandlers:
 			print("Device status GET requested for device with id: {}".format(params["id"]))
 		else:
 			print("Device status GET requested for all devices")
-		
+
 		print("Body:" + body)
 		
 	def deviceStatusPostRequest(server, params, body):
