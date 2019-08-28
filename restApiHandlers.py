@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-class RequestHandlers:
+class RestApiHandlers:
 
 	def getHelloWorld(server, params, body):
 		print("Hello world is hit!")

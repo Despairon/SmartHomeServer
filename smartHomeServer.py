@@ -1,51 +1,38 @@
 #!/usr/bin/env python
 
-from http.server import BaseHTTPRequestHandler
-from router import routes
-from urllib.parse import urlparse, parse_qs
+import time
+from http.server import HTTPServer
+from serverRequestHandler import ServerRequestHandler
 
-class SmartHomeServer(BaseHTTPRequestHandler):
-	
-	def do_GET(self):
-		self.handleRequest()
+class SmartHomeServer(HTTPServer):
+
+	def __init__(self, args):
+		self.__result = True
 		
-	def do_POST(self):
-		self.handleRequest()
-		
-	def do_PUT(self):
-		self.handleRequest()
-		
-	def do_DELETE(self):
-		self.handleRequest()
-		
-	def do_HEAD(self):
-		self.handleRequest()
-		
-	def handleRequest(self):
-		pathWithoutParams = self.path.split("?")[0]
-		
-		print("Requested {} on: {}".format(self.command, pathWithoutParams))
-		
-		if self.command in routes:
-			if pathWithoutParams in routes[self.command]:
-				contentType = self.headers.get('content-type')
-				
-				if contentType == "application/json":
-					bodyLength = int(self.headers.get('content-length'))
-					body = self.rfile.read(bodyLength).decode("UTF-8")
-				else:
-					body = ""
-				
-				params = parse_qs(urlparse(self.path).query)
-				
-				routes[self.command][pathWithoutParams](self, params, body)
-			else:
-				self.sendError(404, "404: request {} {} not found.".format(self.command, self.path))
+		if args.host:
+			hostName = args.host
 		else:
-			self.sendError(404, "404: request {} {} not found.".format(self.command, self.path))
+			hostName = "localhost"
+		
+		if args.port:
+			hostPort = args.port
+		else:
+			hostPort = 8000
+
+		super().__init__((hostName, hostPort), ServerRequestHandler)
+		
+		print("{}: Server {}:{} is UP".format(time.asctime(), hostName, hostPort))
+		
+		try:
+			super().serve_forever()
+		except KeyboardInterrupt:
+			print("Keyboard interrupt received. Closing the server...")
+			self.__result = False
+			pass
+			
+		super().server_close()
+		
+		print("{}: Server {}:{} is DOWN".format(time.asctime(), hostName, hostPort))
 	
-	def sendError(self, status, message):
-		self.send_response(status)
-		self.send_header('Content-type', "text/plain")
-		self.end_headers()
-		self.wfile.write(bytes(message, "UTF-8"))
+	def getResult(self):
+		return self.__result

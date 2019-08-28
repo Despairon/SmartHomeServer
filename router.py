@@ -1,17 +1,17 @@
 #!/usr/bin/env python
 
-from requestHandlers import RequestHandlers
+from restApiHandlers import RestApiHandlers
 	
 routes = {
 	"GET": {
-		"/deviceStatus" : RequestHandlers.deviceStatusGetRequest
+		"/deviceStatus" : RestApiHandlers.deviceStatusGetRequest
 	},
 	
 	"POST": {
-		"/deviceStatus" : RequestHandlers.deviceStatusPostRequest
+		"/deviceStatus" : RestApiHandlers.deviceStatusPostRequest
 	},
 	
 	"PUT": {
-		"/deviceStatus" : RequestHandlers.deviceStatusPutRequest
+		"/deviceStatus" : RestApiHandlers.deviceStatusPutRequest
 	}
 }
