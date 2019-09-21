@@ -38,7 +38,7 @@ class ServerRequestHandler(BaseHTTPRequestHandler):
 				
 				params = parse_qs(urlparse(self.path).query)
 				
-				routes[self.command][pathWithoutParams](self.server, params, body)
+				routes[self.command][pathWithoutParams](self, self.server, params, body)
 			else:
 				self.sendError(404, "404: request {} {} not found.".format(self.command, self.path))
 		else:

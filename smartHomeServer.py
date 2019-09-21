@@ -45,6 +45,8 @@ class SmartHomeServer(HTTPServer):
 				password = f.decrypt(self.__config["db_pw_encrypted"].encode())
 				databaseUrl = self.__config["database"].replace(":pw@", ":{}@".format(password.decode("utf-8")))
 				self.__dbClient = pymongo.MongoClient(databaseUrl)
+				self.__devicesDb = self.__dbClient.devicesDatabase
+				self.__devicesCollection = self.__devicesDb.devicesCollection
 		except Exception as e:
 			print("Error connecting to the database: {}".format(e))
 			self.__result = False
@@ -66,3 +68,29 @@ class SmartHomeServer(HTTPServer):
 	
 	def getResult(self):
 		return self.__result
+		
+	def getDeviceInfo(self, deviceId):
+		result = True
+		deviceInfo = None
+		
+		if self.__devicesCollection:
+			deviceInfo = self.__devicesCollection.find_one({"_id": deviceId})
+			if not deviceInfo:
+				result = False
+		else:
+			result = False
+			
+		return result, deviceInfo
+		
+	def getAllDeviceInfos(self):
+		result = True
+		deviceInfos = None
+		
+		if self.__devicesCollection:
+			deviceInfos = self.__devicesCollection.find()
+			if not deviceInfos:
+				result = False
+		else:
+			result = False
+		
+		return result, deviceInfos
