@@ -7,6 +7,7 @@ import pymongo
 from cryptography.fernet import Fernet
 from http.server import HTTPServer
 from serverRequestHandler import ServerRequestHandler
+from bson.objectid import ObjectId
 
 class SmartHomeServer(HTTPServer):
 
@@ -14,7 +15,7 @@ class SmartHomeServer(HTTPServer):
 		"defaultHost"        : "localhost",
 		"defaultPort"        : 8000,
 		"database"           : "mongodb+srv://SmartHomeServer:pw@despaironcluster-lorle.mongodb.net/test?retryWrites=true&w=majority",
-		"db_pw_encrypted"    : "gAAAAABdesqmOQQG5tz6ma5zHTCtF8tdhpqjWWKccbAkgxEnlZCBHeDBXOaIek4AlHUwwjM-DmMH3gY1DgFX0Iz7wyYoD9QZNA==",
+		"db_pw_encrypted"    : "gAAAAABdj2Q4iLK0EGjP0uAzeA-lPA7-hqA86rPqFVhhU7fTiXcHAkSardTXA62MQLhc8iWlSlgx-hO8UylPtOTYmBvo_ruRr9FCvXMJ_U4NZsRsgR6gypQ=",
 		"db_pw_key_location" : "pw.key"
 	}
 
@@ -74,7 +75,7 @@ class SmartHomeServer(HTTPServer):
 		deviceInfo = None
 		
 		if self.__devicesCollection:
-			deviceInfo = self.__devicesCollection.find_one({"_id": deviceId})
+			deviceInfo = self.__devicesCollection.find_one({"_id": ObjectId(deviceId)})
 			if not deviceInfo:
 				result = False
 		else:
@@ -87,10 +88,42 @@ class SmartHomeServer(HTTPServer):
 		deviceInfos = None
 		
 		if self.__devicesCollection:
-			deviceInfos = self.__devicesCollection.find()
+			if self.__devicesCollection.find_one():
+				deviceInfos = self.__devicesCollection.find()
 			if not deviceInfos:
 				result = False
 		else:
 			result = False
 		
 		return result, deviceInfos
+		
+	def addDevice(self, deviceDesc):
+		result = True
+		deviceId = None
+		deviceInfoFromDb = None
+		
+		for param in deviceDesc:
+			if param["name"] == "device_ID":
+				deviceId = param["currentValue"]
+				break
+		else:
+			result = False
+			
+		if result and deviceId:
+			try:
+				# TODO: use mac address to look up the device
+				deviceInfoFromDb = self.__devicesCollection.find_one({"_id": ObjectId(deviceId)})
+			except Exception:
+				pass
+			
+			if deviceInfoFromDb:
+				opResult = self.__devicesCollection.replace_one({"_id": ObjectId(deviceId)}, {"deviceDesc": deviceDesc}, upsert=False)
+				# TODO: find out why doesn't work.
+				#if not opResult["matched_сount"] or not opResult["modified_count"]:
+				#	result = False
+			else:
+				deviceId = self.__devicesCollection.insert_one({"deviceDesc": deviceDesc}).inserted_id
+		else:
+			result = False
+			
+		return result, deviceId

@@ -28,11 +28,16 @@ class ServerRequestHandler(BaseHTTPRequestHandler):
 		
 		if self.command in routes:
 			if pathWithoutParams in routes[self.command]:
-				contentType = self.headers.get('content-type')
+				contentType = self.headers.get('Content-type')
 				
 				if contentType == "application/json":
-					bodyLength = int(self.headers.get('content-length'))
-					body = self.rfile.read(bodyLength).decode("UTF-8")
+					contentLength = self.headers.get('Content-Length')
+					if contentLength:
+						bodyLength = int(contentLength)
+						body = self.rfile.read(bodyLength).decode("UTF-8")
+					else:
+						print("Content-Length header isn't found")
+						body = ""
 				else:
 					body = ""
 				

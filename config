@@ -2,6 +2,6 @@
 	"defaultHost": "localhost",
 	"defaultPort": 8000,
 	"database": "mongodb+srv://SmartHomeServer:pw@despaironcluster-lorle.mongodb.net/test?retryWrites=true&w=majority",
-	"db_pw_encrypted": "gAAAAABdesqmOQQG5tz6ma5zHTCtF8tdhpqjWWKccbAkgxEnlZCBHeDBXOaIek4AlHUwwjM-DmMH3gY1DgFX0Iz7wyYoD9QZNA==",
+	"db_pw_encrypted": "gAAAAABdj2Q4iLK0EGjP0uAzeA-lPA7-hqA86rPqFVhhU7fTiXcHAkSardTXA62MQLhc8iWlSlgx-hO8UylPtOTYmBvo_ruRr9FCvXMJ_U4NZsRsgR6gypQ=",
 	"db_pw_key_location": "pw.key"
 }
